@@ -1,8 +1,11 @@
+import os
 import asyncio
 import websockets
 
 async def send_message():
-    uri = "wss://serverproducts-9lt2.onrender.com"
+    # Obtém o número da porta da variável de ambiente PORT ou usa 443 (porta padrão para WebSocket seguro)
+    ws_port = int(os.environ.get("PORT", 443))
+    uri = f"wss://serverproducts-9lt2.onrender.com:{ws_port}"
     async with websockets.connect(uri) as websocket:
         await websocket.send("oi")
         print(f"> Enviado: oi")
@@ -11,4 +14,4 @@ async def send_message():
         print(f"< Recebido: {response}")
 
 # Executa o script
-asyncio.get_event_loop().run_until_complete(send_message())
+asyncio.run(send_message())
