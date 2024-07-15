@@ -4,7 +4,7 @@ from aiohttp import web
 import json
 
 async def send_message():
-    uri = "ws://localhost:8765"
+    uri = "wss://serverproducts-9lt2.onrender.com"
     request = {
         "categories": [
             "Kids_kits",
