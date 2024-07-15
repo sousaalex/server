@@ -1,14 +1,30 @@
 import asyncio
 import websockets
+import json
 
-async def send_message():
+async def test():
     uri = "ws://localhost:8765"
-    async with websockets.connect(uri) as websocket:
-        message = "kitket!" 
-        await websocket.send(message)
-        print(f"Mensagem enviada: {message}")
-        
-        response = await websocket.recv()
-        print(f"Resposta recebida: {response}")
+    request = {
+        "categories": [
+            "Kids_kits",
+            "Wedding",
+            "Christening_Birthday_gifts",
+            "Birthday_gifts",
+            "Valentines_Day",
+            "Father_Day",
+            "Mother_Day",
+            "Christmas",
+            "Caketopper",
+        ],
+        "price_ranges": ["0-50", "50-100", "100-200", "200+"]
+    }
+    
+    async with websockets.connect(uri, timeout=10) as websocket:
+        await websocket.send(json.dumps(request))
+        print(f"> Enviado: {json.dumps(request)}")
 
-asyncio.get_event_loop().run_until_complete(send_message())
+        response = await websocket.recv()
+        print(f"< Recebido: {response}")
+        return response  # Retorna a resposta recebida do WebSocket
+
+asyncio.run(test())

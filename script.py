@@ -1,15 +1,30 @@
 import asyncio
 import websockets
 from aiohttp import web
+import json
 
 async def send_message():
-    uri = "wss://serverproducts-9lt2.onrender.com"
+    uri = "ws://localhost:8765"
+    request = {
+        "categories": [
+            "Kids_kits",
+            "Wedding",
+            "Christening_Birthday_gifts",
+            "Birthday_gifts",
+            "Valentines_Day",
+            "Father_Day",
+            "Mother_Day",
+            "Christmas",
+            "Caketopper",
+        ],
+        "price_ranges": ["0-50", "50-100", "100-200", "200+"]
+    }
     
     for attempt in range(5):
         try:
             async with websockets.connect(uri, timeout=10) as websocket:
-                await websocket.send("Hello World")
-                print(f"> Enviado: hello world")
+                await websocket.send(json.dumps(request))
+                print(f"> Enviado: {json.dumps(request)}")
 
                 response = await websocket.recv()
                 print(f"< Recebido: {response}")
