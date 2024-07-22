@@ -131,21 +131,34 @@ async def handler(websocket, path):
         try:
             print(f"Received message: {message}")  # Debug log
             request = json.loads(message)
-            
+
             categories = request.get('categories', [])
             price_ranges = request.get('price_ranges', [])
-            
+
             if not isinstance(categories, list) or not isinstance(price_ranges, list):
                 await websocket.send(json.dumps({"error": "Invalid message format, expected lists"}))
                 continue
-            
+
+            # Construção dinâmica do feedback
+            feedback = "Search result "
+            if categories:
+                feedback += f"in the category \"{categories}\" "
+            if price_ranges:
+                feedback += f"with the prices \"{price_ranges}\""
+            feedback += ""
+
             products = await get_data_from_firebase(categories, price_ranges)
-            await websocket.send(json.dumps(products))
-        
+            response_data = {
+                "products": products,
+                "feedback": feedback
+            }
+            #print("response_data", response_data) 
+            await websocket.send(json.dumps(response_data))
+
         except websockets.ConnectionClosed:
             print("Connection closed")
             break
-        
+
         except Exception as e:
             print(f"Error handling message: {e}")
             await websocket.send(json.dumps({"error": "Internal server error"}))
